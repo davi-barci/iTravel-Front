@@ -36,6 +36,7 @@ const ContainerNavBar = styled.div`
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 10;
 
     >p{
         font-family: 'Poppins', sans-serif;

@@ -1,15 +1,22 @@
-import styled from "styled-components";
+import DataSection from "./DataSection/DataSection";
+import MainSection from "./MainSection/MainSection";
+import Newsletter from "./Newsletter/Newsletter";
+import TopDestination from "./TopDestinationSection/TopDestination";
+import Tutorial from "./TutorialSection/Tutorial";
 
 export default function Home(){
     return(
-        <ContainerHomePage>
-
-        </ContainerHomePage>
+      <>
+        <MainSection/>
+        <Tutorial/>
+        <TopDestination/>
+        <DataSection/>
+        <Newsletter/>
+      </>
     );
 }
 
-const ContainerHomePage = styled.div`
-    width: 100%;
-    height: 100vh;
-    background-color: blue;
-`;
+
+
+
+
