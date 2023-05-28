@@ -5,6 +5,7 @@ import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
 import FlightsSearch from "./pages/Flights/ FlightsSearch";
 import HostingSearch from "./pages/Hosting/HostingSearch";
+import FlightPage from "./pages/Flights/FlightPage";
 
 register();
 
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/flights" element={<FlightsSearch/>} />
           <Route path="/hosting" element={<HostingSearch/>} />
+          <Route path="/flights/:id" element={<FlightPage/>} />
         </Routes>
         <Footer/>
     </BrowserRouter>
