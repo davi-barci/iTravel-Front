@@ -1,10 +1,13 @@
 import styled from "styled-components";
 import { BsGlobe } from "react-icons/bs";
 import BrazilFlag from "../../assets/brazil_flag.png";
+import { useLocation } from 'react-router-dom';
 
 export default function NavBar(){
+    const location = useLocation();
+
     return (
-        <ContainerNavBar>
+        <ContainerNavBar pathname={location.pathname}>
             <p>iTravel</p>
             <div>
                 <img src={BrazilFlag} alt="Brazil Flag"/>
@@ -31,7 +34,7 @@ const ContainerNavBar = styled.div`
     top: 0px;
     left: 0px;
     height: 80px;
-    background: transparent;
+    background: ${(props) => (props.pathname === '/' ? 'transparent' : '#2A95AE')};
     display: flex;
     justify-content: space-between;
     align-items: center;
