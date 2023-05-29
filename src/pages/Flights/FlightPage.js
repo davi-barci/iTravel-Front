@@ -1,51 +1,85 @@
 import styled from "styled-components";
 import {AiOutlineArrowLeft} from "react-icons/ai";
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import dayjs from "dayjs";
+import FlightsContext from "../../contexts/FlightsContext";
 
 export default function FlightPage(){
+    const { id } = useParams();
+    const [flight, setFlight] = useState([]);
+    const navigate = useNavigate();
+    const {originCity, destinationCity} = useContext(FlightsContext);
+
+    useEffect(() => {
+        axios
+       .get(`${process.env.REACT_APP_API_URL}/flights/${id}`)
+       .then((res) => {
+         setFlight(res.data);
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+     }, []);
+ 
+     useEffect(() => {
+         window.scrollTo(0, 0);
+     }, []);
+ 
     return(
         <ContainerFlightPage>
-            <div>
+            <div onClick={() => navigate(`/flights/${originCity}/${destinationCity}`)}>
                 <AiOutlineArrowLeft/>
                 <p>Voltar</p>
             </div>
 
             <div>
-                <img src="https://www.fab.mil.br/sis/enoticias/imagens/original/42267/SID_RNP_AR_1.JPG"/>
-                <div>
-                    <div>
-                        <div>
-                            <img src="https://br.staticontent.com/flights-images/21.94.2/common/airlines/25x25/L0.png"/>
-                            <p>LATAM</p>
+                {flight.length === 0 ? (
+                    <p>Carregando Vôo</p>
+                ) : (
+                    flight.map((flight) => (
+                        <>                        
+                            <img src={flight.image} />
                             <div>
-                                <p>7.1</p>
+                                <div>
+                                    <div>
+                                        <img src={flight.airlinelogo} />
+                                        <p>{flight.airline}</p>
+                                        <div>
+                                            <p>{flight.airlinerating}</p>
+                                        </div>
+                                    </div>
+
+                                    <p>{`R$ ${flight.price}`}</p>
+                                </div>
+
+                                <div>
+                                    <div>
+                                        <p>{dayjs(flight.outputForecast).format('DD/MM/YYYY')}</p>
+                                        <p>{dayjs(flight.outputForecast).format("HH:mm")}</p>
+                                        <p>{flight.originairportacronym}</p>
+                                        <p>{flight.origincity}</p>
+                                        <p>{flight.originairport}</p>
+                                    </div>
+                                    <div>
+                                        <p>Duração</p>
+                                        <p>{`${Math.floor(dayjs(flight.arrivalForecast).diff(dayjs(flight.outputForecast), 'minute') / 60)}h ${Math.floor(dayjs(flight.arrivalForecast).diff(dayjs(flight.outputForecast), 'minute') % 60)}m`}</p>
+                                    </div>
+                                    <div>
+                                        <p>{dayjs(flight.arrivalForecast).format("DD/MM/YYYY")}</p>
+                                        <p>{dayjs(flight.arrivalForecast).format("HH:mm")}</p>
+                                        <p>{flight.destinationairportacronym}</p>
+                                        <p>{flight.destinationcity}</p>
+                                        <p>{flight.destinationairport}</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
-                        <p>R$ 530</p>
-                    </div>
-
-                    <div>
-                        <div>
-                            <p>28/05/23</p>
-                            <p>15:00</p>
-                            <p>GRU</p>
-                            <p>São Paulo</p>
-                            <p>Aeroporto Internacional Guarulhos</p>
-                        </div>
-                        <div>
-                            <p>Duração</p>
-                            <p>1h 15m</p>
-                        </div>
-                        <div>
-                            <p>28/05/23</p>
-                            <p>16:15</p>
-                            <p>SDU</p>
-                            <p>Rio de Janeiro</p>
-                            <p>Aeroporto Santos Dumont</p>
-                        </div>
-                    </div>
-                </div>
+                        </>
+                    ))
+                )}
             </div>
+
         </ContainerFlightPage>
     );
 }
