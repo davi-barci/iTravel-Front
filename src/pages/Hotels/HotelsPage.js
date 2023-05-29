@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import {AiOutlineArrowLeft} from "react-icons/ai";
-import slideImages from "../../constants/SlideImages";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 export default function HotelsPage(){
     const { id, cidadeDestino } = useParams();
     const [hotel, setHotel] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios
@@ -60,8 +60,11 @@ export default function HotelsPage(){
           ],
         };
     
-        Object.assign(swiperContainer, params);
-        swiperContainer.initialize();
+        if (swiperContainer) {
+            Object.assign(swiperContainer, params);
+            swiperContainer.initialize();
+        }
+        
 
         const handlePageRefresh = () => {
           window.scrollTo(0, 0);
@@ -72,7 +75,7 @@ export default function HotelsPage(){
         return () => {
           window.removeEventListener("beforeunload", handlePageRefresh);
         };
-    }, []);
+    }, [hotel]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -81,7 +84,7 @@ export default function HotelsPage(){
 
     return(
         <ContainerHotels>
-            <div>
+            <div onClick={() => navigate(`/hotels/${cidadeDestino}`)}>
                 <AiOutlineArrowLeft/>
                 <p>Voltar</p>
             </div>
@@ -120,7 +123,12 @@ export default function HotelsPage(){
                         <div>
                             <p>A hospedagem oferece</p>
                             <div>
-        
+                                {hotel.amenities.map((amenity) => (
+                                    <div key={amenity.id}>
+                                        <img src={amenity.iconUrl} alt="Ícone da comodidade" />
+                                        <p>{amenity.name}</p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
         
@@ -284,7 +292,29 @@ const ContainerHotels = styled.div`
                 width: calc(100% - 20px);
                 height:80px;
                 margin: 0px auto 20px auto;
-                background-color: black;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 0px 40px;
+
+                >div{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+
+                    >img{
+                        width: 50px;
+                        height: 50px;
+                        object-fit: cover;
+                    }
+
+                    >p{
+                        font-family: 'Poppins', sans-serif;
+                        font-size: 16px;
+                        font-weight: 700;
+                    }
+                }
             }
         }
 

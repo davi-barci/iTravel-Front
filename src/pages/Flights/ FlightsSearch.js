@@ -89,7 +89,7 @@ export default function FlightsSearch(){
                         <BsAirplaneFill/>
                     </div>
 
-                    <div>
+                    <div onClick={() => navigate(`/hotels/${cidadeDestino}`)}>
                         <BsFillBuildingsFill/>
                     </div>
                 </div>

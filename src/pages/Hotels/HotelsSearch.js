@@ -10,7 +10,7 @@ import axios from "axios";
 export default function HotelsSearch(){
     const { cidadeDestino } = useParams();
     const {cities} = useContext(CitiesContext);
-    const {destinationCity, setDestinationCity} = useContext(FlightsContext);
+    const {destinationCity, setDestinationCity, originCity} = useContext(FlightsContext);
     const {minValueHotels, setMinValueHotels, maxValueHotels, setMaxValueHotels} = useContext(HotelsContext);
     const [hotels, setHotels] = useState([]);
     const navigate = useNavigate();
@@ -76,7 +76,7 @@ export default function HotelsSearch(){
 
             <div>
                 <div>
-                    <div>
+                    <div onClick={() => navigate(`/flights/${originCity}/${cidadeDestino}`)}>
                         <BsAirplaneFill/>
                     </div>
 
