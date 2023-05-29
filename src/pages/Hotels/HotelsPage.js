@@ -1,9 +1,28 @@
 import styled from "styled-components";
 import {AiOutlineArrowLeft} from "react-icons/ai";
 import slideImages from "../../constants/SlideImages";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function HotelsPage(){
+    const { id, cidadeDestino } = useParams();
+    const [hotel, setHotel] = useState([]);
+
+    useEffect(() => {
+        axios
+       .get(`${process.env.REACT_APP_API_URL}/hotels/${cidadeDestino}/${id}`)
+       .then((res) => {
+         setHotel(res.data);
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+     }, []);
+ 
+     useEffect(() => {
+         window.scrollTo(0, 0);
+     }, []);
 
     const swiperRef = useRef(null);
 
@@ -55,6 +74,11 @@ export default function HotelsPage(){
         };
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+    
+
     return(
         <ContainerHotels>
             <div>
@@ -63,60 +87,50 @@ export default function HotelsPage(){
             </div>
 
             <div>
-                <swiper-container ref={swiperRef} init="false">
-                    {slideImages.map((imagem, index) => 
-                        <swiper-slide key={index}>
-                                <img src={imagem} alt="Slide"/>
-                        </swiper-slide>
-                    )}
-                </swiper-container>
-
-                <div>
-                    <div>
+                {hotel.length === 0 ? (<p>Carregando Hotel</p>) : (
+                    hotel.map((hotel) => (
+                        <>
+                        <swiper-container ref={swiperRef} init="false">
+                            {hotel.images.map((imagem, index) => 
+                                <swiper-slide key={index}>
+                                        <img src={imagem} alt="Slide"/>
+                                </swiper-slide>
+                            )}
+                        </swiper-container>
+        
                         <div>
-                            <p>Hotel Nacional do Rio de Janeiro</p>
-                            <p>Rio de Janeiro, Brasil. A 11,16 km do centro</p>
+                            <div>
+                                <div>
+                                    <p>{hotel.hotel_name}</p>
+                                    <p>{hotel.address}</p>
+                                </div>
+                                <p>Preço Diária: R$ {hotel.dailyPrice}</p>
+                            </div>
+                            <div>
+                                <div>
+                                    <p>{hotel.rating}</p>
+                                </div>
+                                <div>
+                                    <p>{(hotel.rating < 5)?"Ruim":(hotel.rating >5 && hotel.rating < 8)?"Bom":"Muito Bom"}</p>
+                                    <p>{hotel.reviewsNumber} reviews</p>
+                                </div>
+                            </div>
                         </div>
-                        <p>Preço Diária: R$ 2000</p>
-                    </div>
-                    <div>
+                        
                         <div>
-                            <p>8.3</p>
+                            <p>A hospedagem oferece</p>
+                            <div>
+        
+                            </div>
                         </div>
+        
                         <div>
-                            <p>Muito Bom</p>
-                            <p>75 reviews</p>
+                            <p>Conheça um pouco mais</p>
+                            <p>{hotel.description}</p>
                         </div>
-                    </div>
-                </div>
-                
-                <div>
-                    <p>A hospedagem oferece</p>
-                    <div>
-
-                    </div>
-                </div>
-
-                <div>
-                    <p>Conheça um pouco mais</p>
-                    <p>
-                    O icônico Hotel Nacional Rio de Janeiro, patrimônio histórico da humanidade 
-                    e símbolo da arquitetura brasileira, foi projetado por Oscar Niemeyer e os 
-                    jardins por Burle Marx, em frente ao mar de São Conrado. Possui localização 
-                    estratégica com fácil acesso à praia, aeroportos, shopping e principais 
-                    pontos de lazer da Cidade Maravilhosa, entre a Pedra da Gávea e o Morro 
-                    Dois Irmãos. Oferece piscina ao ar livre o ano todo, wi-fi grátis nas áreas 
-                    comuns e serviço de spa e sauna com custo adicional. 
-                    Importante saber: acessível para pessoas com mobilidade reduzida, 
-                    unidades adaptadas disponíveis, animais de estimação não permitidos e 
-                    quartos com janelas fixas para manter a climatização. A hospedagem serve 
-                    diariamente café da manhã e dispõe de bar. Os funcionários fornecem serviço 
-                    de quarto. Destacam-se também serviços como massagem, estacionamento limitado, 
-                    academia e recepção 24h. Os hóspedes podem aproveitar depósito de bagagem grátis, 
-                    piscina infantil e, mediante custo extra, serviços de lavanderia e lavagem a seco.
-                    </p>
-                </div>
-
+                        </>
+                    ))
+                )}
             </div>
         </ContainerHotels>
     );
