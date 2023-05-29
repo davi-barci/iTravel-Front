@@ -1,11 +1,16 @@
 import styled from "styled-components";
 import slideImages from "../../../constants/SlideImages";
-import { useEffect, useRef} from "react";
+import { useContext, useEffect, useRef} from "react";
 import { useNavigate } from "react-router-dom";
+import CitiesContext from "../../../contexts/CitiesContext";
+import FlightsContext from "../../../contexts/FlightsContext";
 
-export default function MainSection(props){
+export default function MainSection(){
     const swiperRef = useRef(null);
     const navigate = useNavigate();
+    const {cities} = useContext(CitiesContext);
+    const { setDestinationCity } = useContext(FlightsContext);
+    
 
     useEffect(() => {
         const swiperContainer = swiperRef.current;
@@ -76,7 +81,7 @@ export default function MainSection(props){
         const selectedCity = event.target.cities.value; 
    
         if (selectedCity !== "") {
-          navigate(`flights/0/${selectedCity}}`);
+          navigate(`flights/0/${selectedCity}`);
         } 
       }
 
@@ -96,9 +101,9 @@ export default function MainSection(props){
                 With <span>iTravel</span></p>
                 <div>
                     <form onSubmit={handleSubmit}>
-                      <select name="cities" defaultValue="">
+                      <select name="cities" defaultValue="" onChange={(e) => setDestinationCity(e.target.value)}>
                           <option value="" disabled>Selecione o seu destino</option>
-                          {props.cities.map((elem) => (
+                          {cities.map((elem) => (
                             <option key={elem.id} value={elem.id}>{elem.name}</option>
                           ))}
                       </select>

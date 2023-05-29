@@ -6,12 +6,18 @@ import ParisImg from "../../../assets/PopularDestinations/paris.jpg";
 import NewYorkImg from "../../../assets/PopularDestinations/newyork.jpg";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import CitiesContext from "../../../contexts/CitiesContext";
+import { useContext } from "react";
+import FlightsContext from "../../../contexts/FlightsContext";
 
-export default function TopDestination(props){
+export default function TopDestination(){
     const navigate = useNavigate();
+    const {cities} = useContext(CitiesContext);
+    const { setDestinationCity } = useContext(FlightsContext);
 
     function searchFlights(name){
-        const city = props.cities.find(city => city.name === name);
+        const city = cities.find(city => city.name === name);
+        setDestinationCity(city.id);
         navigate(`/flights/0/${city.id}`);
     }
 

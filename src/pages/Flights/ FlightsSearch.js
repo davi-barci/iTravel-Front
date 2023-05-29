@@ -1,18 +1,51 @@
 import styled from "styled-components";
 import {BsAirplaneFill, BsFillBuildingsFill} from "react-icons/bs";
 import { useEffect, useState } from "react";
+import CitiesContext from "../../contexts/CitiesContext.js";
+import { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import dayjs from 'dayjs';
+import FlightsContext from "../../contexts/FlightsContext.js";
 
 export default function FlightsSearch(){
-    const [minValue, setMinValue] = useState(0);
-    const [maxValue, setMaxValue] = useState(10000);
+    const {originCity, setOriginCity, destinationCity, 
+    setDestinationCity, minValueFlight, setMinValueFlight, 
+    maxValueFlight, setMaxValueFlight} = useContext(FlightsContext);
+    const {cities} = useContext(CitiesContext);
+    const { cidadeOrigem, cidadeDestino } = useParams();
+    const [flights, setFlights] = useState([]);
+    const navigate = useNavigate();
 
-    const updateMinValue = (valor) => {
-        setMinValue(valor);
-    };
+    function handleSubmit(event) {
+        event.preventDefault();
+        
+        if(minValueFlight >= maxValueFlight){
+            alert("O valor mínimo deve ser menor que o valor máximo...");
+            return
+        }else{
+            navigate(`/flights/${originCity}/${destinationCity}`);
+        }
+    }
 
-    const updateMaxValue = (valor) => {
-        setMaxValue(valor);
-    };
+    useEffect(() => {
+       axios
+      .get(`${process.env.REACT_APP_API_URL}/flights/${cidadeOrigem}/${cidadeDestino}`, {
+        params: {
+          maxValue: maxValueFlight,
+          minValue: minValueFlight
+        }
+        })
+      .then((res) => {
+        setFlights(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+      setOriginCity(cidadeOrigem);
+      setDestinationCity(cidadeDestino);
+    }, [cidadeOrigem, cidadeDestino, maxValueFlight, minValueFlight]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -21,35 +54,32 @@ export default function FlightsSearch(){
     return(
         <ContainerFlight>
             <div>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <label>Passagens Aéreas</label>
                     <label>Origem</label>
-                    <select name="cities">
-                        <option value="" disabled selected>Selecione a sua origem</option>
-                        <option value="Rio de Janeiro">Rio de Janeiro</option>
-                        <option value="São Paulo">São Paulo</option>
-                        <option value="Paris">Paris</option>
-                        <option value="Dubai">Dubai</option>
+                    <select name="origin" value={originCity.toString()} onChange={(e) => setOriginCity(Number(e.target.value))}>
+                        <option value="0">Qualquer</option>
+                        {cities.map((city) => (
+                            <option key={city.id} value={city.id.toString()}>{city.name}</option>
+                        ))}
                     </select>
                     <label>Destino</label>
-                    <select name="cities">
-                        <option value="" disabled selected>Selecione o seu destino</option>
-                        <option value="Rio de Janeiro">Rio de Janeiro</option>
-                        <option value="São Paulo">São Paulo</option>
-                        <option value="Paris">Paris</option>
-                        <option value="Dubai">Dubai</option>
+                    <select name="destination" value={destinationCity.toString()} onChange={(e) => setDestinationCity(Number(e.target.value))}>
+                        {cities.map((city) => (
+                            <option key={city.id} value={city.id.toString()}>{city.name}</option>
+                        ))}
                     </select>
                     <div>
                         <label>Preço Mínimo</label>
-                        <label>R$ {minValue}</label>
+                        <label>R$ {minValueFlight}</label>
                     </div>
-                    <input type="range" min="0" max="10000" step="50" value={minValue} onChange={(e) => updateMinValue(e.target.value)}/>
+                    <input type="range" min="0" max="10000" step="50" value={minValueFlight} onChange={(e) => setMinValueFlight(e.target.value)}/>
                     <div>
                         <label>Preço Máximo</label>
-                        <label>R$ {maxValue}</label>
+                        <label>R$ {maxValueFlight}</label>
                     </div>
-                    <input type="range" min="0" max="10000" step="50" value={maxValue} onChange={(e) => updateMaxValue(e.target.value)}/>
-                    <button>Procurar</button>
+                    <input type="range" min="0" max="10000" step="50" value={maxValueFlight} onChange={(e) => setMaxValueFlight(e.target.value)}/>
+                    <button type="submit">Procurar</button>
                 </form>
             </div>
 
@@ -64,37 +94,43 @@ export default function FlightsSearch(){
                     </div>
                 </div>
 
-                <div>
+                {(flights.length === 0) ?
+                    <p>Infelizmente, não encontramos nenhum vôo com esses parâmetros 😢</p>
+                    :
                     <div>
-                        <div>
+                        {flights.map((flight) => (
                             <div>
-                                <img src="https://br.staticontent.com/flights-images/21.94.2/common/airlines/25x25/L0.png"/>
-                                <p>LATAM</p>
+                                <div>
+                                    <div>
+                                        <img src={flight.airlinelogo}/>
+                                        <p>{flight.airline}</p>
+                                    </div>
+                                    <div>
+                                        <p>{dayjs(flight.outputForecast).format('DD/MM/YYYY')}</p>
+                                        <p>{dayjs(flight.outputForecast).format("HH:mm")}</p>
+                                        <p>{flight.originairportacronym}</p>
+                                        <p>{flight.origincity}</p>
+                                    </div>
+                                    <div>
+                                        <p>Duração</p>
+                                        <p>{`${Math.floor(dayjs(flight.arrivalForecast).diff(dayjs(flight.outputForecast), 'minute') / 60)}h ${Math.floor(dayjs(flight.arrivalForecast).diff(dayjs(flight.outputForecast), 'minute') % 60)}m`}</p>
+                                    </div>
+                                    <div>
+                                        <p>{dayjs(flight.arrivalForecast).format("DD/MM/YYYY")}</p>
+                                        <p>{dayjs(flight.arrivalForecast).format("HH:mm")}</p>
+                                        <p>{flight.destinationairportacronym}</p>
+                                        <p>{flight.destinationcity}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p>Preço</p>
+                                    <p>{`R$ ${flight.price}`}</p>
+                                    <button onClick={() => navigate(`/flights/${flight.id}`)}>Ver Mais</button>
+                                </div>
                             </div>
-                            <div>
-                                <p>28/05/23</p>
-                                <p>15:00</p>
-                                <p>GRU</p>
-                                <p>São Paulo</p>
-                            </div>
-                            <div>
-                                <p>Duração</p>
-                                <p>1h 15m</p>
-                            </div>
-                            <div>
-                                <p>28/05/23</p>
-                                <p>16:15</p>
-                                <p>SDU</p>
-                                <p>Rio de Janeiro</p>
-                            </div>
-                        </div>
-                        <div>
-                            <p>Preço</p>
-                            <p>R$ 530</p>
-                            <button>Ver Mais</button>
-                        </div>
+                        ))}
                     </div>
-                </div>
+                }
             </div>
         </ContainerFlight>
     );

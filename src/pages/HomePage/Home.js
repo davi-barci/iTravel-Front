@@ -7,24 +7,11 @@ import Tutorial from "./TutorialSection/Tutorial";
 import axios from "axios";
 
 export default function Home(){
-  const [cities, setCities] = useState([]);
-
-  useEffect(() => {
-      axios
-      .get(`${process.env.REACT_APP_API_URL}/cities`)
-      .then((res) => {
-        setCities(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
   return(
     <>
-      <MainSection cities={cities}/>
+      <MainSection/>
       <Tutorial/>
-      <TopDestination cities={cities}/>
+      <TopDestination/>
       <DataSection/>
       <Newsletter/>
     </>
