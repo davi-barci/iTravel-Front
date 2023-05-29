@@ -9,6 +9,7 @@ import FlightPage from "./pages/Flights/FlightPage";
 import HotelsPage from "./pages/Hotels/HotelsPage";
 import CitiesContext from "./contexts/CitiesContext";
 import FlightsContext from "./contexts/FlightsContext";
+import HotelsContext from "./contexts/HotelsContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -20,6 +21,8 @@ export default function App() {
   const [destinationCity, setDestinationCity] = useState(0);
   const [minValueFlight, setMinValueFlight] = useState(0);
   const [maxValueFlight, setMaxValueFlight] = useState(10000);
+  const [minValueHotels, setMinValueHotels] = useState(0);
+  const [maxValueHotels, setMaxValueHotels] = useState(10000);
 
   useEffect(() => {
       axios
@@ -36,15 +39,17 @@ export default function App() {
     <BrowserRouter>
         <NavBar/>
         <CitiesContext.Provider value={{ cities, setCities }}>
+        <HotelsContext.Provider value={{minValueHotels, setMinValueHotels, maxValueHotels, setMaxValueHotels}}>
         <FlightsContext.Provider value={{originCity, setOriginCity, destinationCity, setDestinationCity, minValueFlight, setMinValueFlight, maxValueFlight, setMaxValueFlight}}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/flights/:cidadeOrigem/:cidadeDestino" element={<FlightsSearch/>} />
-            <Route path="/hotels" element={<HotelsSearch/>} />
+            <Route path="/hotels/:cidadeDestino" element={<HotelsSearch/>} />
             <Route path="/flights/:id" element={<FlightPage/>} />
-            <Route path="/hotels/:id" element={<HotelsPage/>} />
+            <Route path="/hotels/:cidadeDestino/:id" element={<HotelsPage/>} />
           </Routes>
         </FlightsContext.Provider>
+        </HotelsContext.Provider>
         </CitiesContext.Provider>
         <Footer/>
     </BrowserRouter>

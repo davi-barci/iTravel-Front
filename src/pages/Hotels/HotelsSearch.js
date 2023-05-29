@@ -1,51 +1,76 @@
 import styled from "styled-components";
 import {BsAirplaneFill, BsFillBuildingsFill} from "react-icons/bs";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import CitiesContext from "../../contexts/CitiesContext.js";
+import FlightsContext from "../../contexts/FlightsContext.js";
+import HotelsContext from "../../contexts/HotelsContext.js";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function HotelsSearch(){
-    const [minValue, setMinValue] = useState(0);
-    const [maxValue, setMaxValue] = useState(10000);
+    const { cidadeDestino } = useParams();
+    const {cities} = useContext(CitiesContext);
+    const {destinationCity, setDestinationCity} = useContext(FlightsContext);
+    const {minValueHotels, setMinValueHotels, maxValueHotels, setMaxValueHotels} = useContext(HotelsContext);
+    const [hotels, setHotels] = useState([]);
+    const navigate = useNavigate();
 
-    const updateMinValue = (valor) => {
-        setMinValue(valor);
-    };
+    function handleSubmit(event) {
+        event.preventDefault();
+        
+        if(minValueHotels >= maxValueHotels){
+            alert("O valor mínimo deve ser menor que o valor máximo...");
+            return
+        }else{
+            navigate(`/hotels/${destinationCity}`);
+        }
+    }
 
-    const updateMaxValue = (valor) => {
-        setMaxValue(valor);
-    };
+    useEffect(() => {
+        axios
+       .get(`${process.env.REACT_APP_API_URL}/hotels/${cidadeDestino}`, {
+         params: {
+           maxValue: maxValueHotels,
+           minValue: minValueHotels
+         }
+         })
+       .then((res) => {
+         setHotels(res.data);
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+ 
+       setDestinationCity(cidadeDestino);
+     }, [cidadeDestino, maxValueHotels, minValueHotels]);
+ 
+     useEffect(() => {
+         window.scrollTo(0, 0);
+     }, []);
+
 
     return(
         <ContainerHotels>
             <div>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <label>Hospedagens</label>
-                    <label>Origem</label>
-                    <select name="cities">
-                        <option value="" disabled selected>Selecione a sua origem</option>
-                        <option value="Rio de Janeiro">Rio de Janeiro</option>
-                        <option value="São Paulo">São Paulo</option>
-                        <option value="Paris">Paris</option>
-                        <option value="Dubai">Dubai</option>
-                    </select>
                     <label>Destino</label>
-                    <select name="cities">
-                        <option value="" disabled selected>Selecione o seu destino</option>
-                        <option value="Rio de Janeiro">Rio de Janeiro</option>
-                        <option value="São Paulo">São Paulo</option>
-                        <option value="Paris">Paris</option>
-                        <option value="Dubai">Dubai</option>
+                    <select name="destination" value={destinationCity.toString()} onChange={(e) => setDestinationCity(Number(e.target.value))}>
+                        {cities.map((city) => (
+                            <option key={city.id} value={city.id.toString()}>{city.name}</option>
+                        ))}
                     </select>
                     <div>
                         <label>Preço Mínimo</label>
-                        <label>R$ {minValue}</label>
+                        <label>R$ {minValueHotels}</label>
                     </div>
-                    <input type="range" min="0" max="10000" step="50" value={minValue} onChange={(e) => updateMinValue(e.target.value)}/>
+                    <input type="range" min="0" max="10000" step="50" value={minValueHotels} onChange={(e) => setMinValueHotels(e.target.value)}/>
                     <div>
                         <label>Preço Máximo</label>
-                        <label>R$ {maxValue}</label>
+                        <label>R$ {maxValueHotels}</label>
                     </div>
-                    <input type="range" min="0" max="10000" step="50" value={maxValue} onChange={(e) => updateMaxValue(e.target.value)}/>
-                    <button>Procurar</button>
+                    <input type="range" min="0" max="10000" step="50" value={maxValueHotels} onChange={(e) => setMaxValueHotels(e.target.value)}/>
+                    <button type="submit">Procurar</button>
                 </form>
             </div>
 
@@ -61,24 +86,37 @@ export default function HotelsSearch(){
                 </div>
 
                 <div>
-                    <div>
-                        <img/>
-                        <div>
-                            <p>Nome Hotel Teste</p>
-                            <p>Rua dos bobos, 420, Rio de Janeiro</p>
+                    {hotels.length === 0 ? (
+                        <p>Infelizmente, não encontramos nenhum hotel com esses parâmetros 😢</p>
+                    ) : (
+                        hotels.map((hotel) => (
+                        <div key={hotel.hotel_id}>
+                            <img src={hotel.imageUrl} alt="Imagem do hotel" />
                             <div>
-                                <p>4.7</p>
+                            <p>{hotel.hotel_name}</p>
+                            <p>{hotel.address}</p>
+                            <div>
+                                <p>{hotel.rating}</p>
                             </div>
                             <div>
+                                {hotel.amenities.map((amenity) => (
+                                <div key={amenity.id}>
+                                    <img src={amenity.iconUrl} alt="Ícone da comodidade" />
+                                    <p>{amenity.name}</p>
+                                </div>
+                                ))}
                             </div>
-                        </div>
-                        <div>
+                            </div>
+                            <div>
                             <p>Preço Diária</p>
-                            <p>R$ 2.280</p>
-                            <button>Veja Mais</button>
+                            <p>R$ {hotel.dailyPrice}</p>
+                            <button onClick={() => navigate(`/hotels/${destinationCity}/${hotel.hotel_id}`)}>Veja Mais</button>
+                            </div>
                         </div>
-                    </div>
+                        ))
+                    )}
                 </div>
+
             </div>
         </ContainerHotels>
     );
@@ -352,10 +390,36 @@ const ContainerHotels = styled.div`
                     }
 
                     >div:nth-of-type(2){
-                        width: 220px;
-                        height: 25px;
-                        background-color: black;
+                        width: auto;
+                        height: auto;
+                        background-color: white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         margin-left: 10px;
+
+                        >div{
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            margin-right: 15px;
+                            flex-wrap: wrap;
+
+                            >img{
+                                width:10px;
+                                height: 10px;
+                                object-fit: cover;
+                                margin-bottom: 5px;
+                            }
+
+                            >p{
+                                width: auto;
+                                font-family: 'Poppins', sans-serif;
+                                font-size: 12px;
+                                font-weight: 700;
+                                text-align: center;
+                            }
+                        }
                     }
                 }
 
