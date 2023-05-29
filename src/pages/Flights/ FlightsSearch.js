@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {BsAirplaneFill, BsFillBuildingsFill} from "react-icons/bs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function FlightsSearch(){
     const [minValue, setMinValue] = useState(0);
@@ -13,6 +13,10 @@ export default function FlightsSearch(){
     const updateMaxValue = (valor) => {
         setMaxValue(valor);
     };
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return(
         <ContainerFlight>

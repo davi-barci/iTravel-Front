@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import slideImages from "../../../constants/SlideImages";
 import { useEffect, useRef} from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function MainSection(){
+export default function MainSection(props){
     const swiperRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const swiperContainer = swiperRef.current;
@@ -69,6 +71,15 @@ export default function MainSection(){
         };
       }, []);
 
+      function handleSubmit(event) {
+        event.preventDefault(); 
+        const selectedCity = event.target.cities.value; 
+   
+        if (selectedCity !== "") {
+          navigate(`flights/0/${selectedCity}}`);
+        } 
+      }
+
     return(
         <ContainerMainSection>
             <swiper-container ref={swiperRef} init="false">
@@ -84,15 +95,14 @@ export default function MainSection(){
                 <p>Explore The World <br/>
                 With <span>iTravel</span></p>
                 <div>
-                    <form>
-                    <select name="cities">
-                        <option value="" disabled selected>Selecione o seu destino</option>
-                        <option value="Rio de Janeiro">Rio de Janeiro</option>
-                        <option value="São Paulo">São Paulo</option>
-                        <option value="Paris">Paris</option>
-                        <option value="Dubai">Dubai</option>
-                    </select>
-                    <input type="submit" value="Buscar"/>
+                    <form onSubmit={handleSubmit}>
+                      <select name="cities" defaultValue="">
+                          <option value="" disabled>Selecione o seu destino</option>
+                          {props.cities.map((elem) => (
+                            <option key={elem.id} value={elem.id}>{elem.name}</option>
+                          ))}
+                      </select>
+                      <input type="submit" value="Buscar"/>
                     </form>
                 </div>
             </div>

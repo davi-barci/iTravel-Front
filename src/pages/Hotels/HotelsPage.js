@@ -3,7 +3,7 @@ import {AiOutlineArrowLeft} from "react-icons/ai";
 import slideImages from "../../constants/SlideImages";
 import { useEffect, useRef } from "react";
 
-export default function HostingPage(){
+export default function HotelsPage(){
 
     const swiperRef = useRef(null);
 
@@ -56,7 +56,7 @@ export default function HostingPage(){
     }, []);
 
     return(
-        <ContainerHosting>
+        <ContainerHotels>
             <div>
                 <AiOutlineArrowLeft/>
                 <p>Voltar</p>
@@ -118,11 +118,11 @@ export default function HostingPage(){
                 </div>
 
             </div>
-        </ContainerHosting>
+        </ContainerHotels>
     );
 }
 
-const ContainerHosting = styled.div`
+const ContainerHotels = styled.div`
     width: 100%;
     min-height: 1000px;
     height: auto;
@@ -292,6 +292,7 @@ const ContainerHosting = styled.div`
             }
 
             >p:nth-of-type(2){
+                display: block;
                 margin-left: 20px;
                 margin-right: 20px;
                 font-size: 12px;
@@ -299,7 +300,7 @@ const ContainerHosting = styled.div`
                 color: #2E2D33;
                 line-height: 24px;
                 margin-bottom: 20px;
-                white-space: wrap;
+                white-space: pre-wrap;
                 word-wrap: break-word;
                 text-align: justify;
             }

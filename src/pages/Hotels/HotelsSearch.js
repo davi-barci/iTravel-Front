@@ -2,7 +2,7 @@ import styled from "styled-components";
 import {BsAirplaneFill, BsFillBuildingsFill} from "react-icons/bs";
 import { useState } from "react";
 
-export default function HostingSearch(){
+export default function HotelsSearch(){
     const [minValue, setMinValue] = useState(0);
     const [maxValue, setMaxValue] = useState(10000);
 
@@ -15,7 +15,7 @@ export default function HostingSearch(){
     };
 
     return(
-        <ContainerHosting>
+        <ContainerHotels>
             <div>
                 <form>
                     <label>Hospedagens</label>
@@ -80,12 +80,12 @@ export default function HostingSearch(){
                     </div>
                 </div>
             </div>
-        </ContainerHosting>
+        </ContainerHotels>
     );
 }
 
 
-const ContainerHosting = styled.div`
+const ContainerHotels = styled.div`
     width: 100%;
     min-height: 1000px;
     height: auto;

@@ -5,15 +5,23 @@ import RioImg from "../../../assets/PopularDestinations/rio.jpg";
 import ParisImg from "../../../assets/PopularDestinations/paris.jpg";
 import NewYorkImg from "../../../assets/PopularDestinations/newyork.jpg";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
-export default function TopDestination(){
+export default function TopDestination(props){
+    const navigate = useNavigate();
+
+    function searchFlights(name){
+        const city = props.cities.find(city => city.name === name);
+        navigate(`/flights/0/${city.id}`);
+    }
+
     return(
         <ContainerTopDestination>
             <p>TOP DESTINATION</p>
             <p>POPULAR <span>DESTINATION</span></p>
             <div>
 
-            <div>
+            <div onClick={() => searchFlights("Ilhas Maldivas")}>
                 <img src={MaldiveImg}/>
                 <div>
                 <FiMapPin/>
@@ -21,7 +29,7 @@ export default function TopDestination(){
                 </div>
             </div>
 
-            <div>
+            <div onClick={() => searchFlights("Dubai")}>
                 <img src={DubaiImg}/>
                 <div>
                 <FiMapPin/>
@@ -32,7 +40,7 @@ export default function TopDestination(){
             </div>
 
             <div>
-                <div>
+                <div onClick={() => searchFlights("Rio de Janeiro")}>
                 <img src={RioImg}/>
                 <div>
                     <FiMapPin/>
@@ -40,7 +48,7 @@ export default function TopDestination(){
                 </div>
                 </div>
 
-                <div>
+                <div onClick={() => searchFlights("Paris")}>
                 <img src={ParisImg}/>
                 <div>
                     <FiMapPin/>
@@ -48,7 +56,7 @@ export default function TopDestination(){
                 </div>
                 </div>
 
-                <div>
+                <div onClick={() => searchFlights("Nova Iorque")}>
                 <img src={NewYorkImg}/>
                 <div>
                     <FiMapPin/>
