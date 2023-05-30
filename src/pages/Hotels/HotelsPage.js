@@ -27,8 +27,8 @@ export default function HotelsPage(){
     const swiperRef = useRef(null);
 
     useEffect(() => {
-        const swiperContainer = swiperRef.current;
-        const params = {
+        const swiperContainerHotels = swiperRef.current;
+        const paramsHotels = {
           slidesPerView: 1,
           effect: 'fade',
           fadeEffect: {
@@ -60,9 +60,9 @@ export default function HotelsPage(){
           ],
         };
     
-        if (swiperContainer) {
-            Object.assign(swiperContainer, params);
-            swiperContainer.initialize();
+        if (swiperContainerHotels ) {
+            Object.assign(swiperContainerHotels, paramsHotels);
+            swiperContainerHotels.initialize();
         }
         
 
@@ -75,12 +75,7 @@ export default function HotelsPage(){
         return () => {
           window.removeEventListener("beforeunload", handlePageRefresh);
         };
-    }, [hotel]);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-    
+    }, [hotel]);    
 
     return(
         <ContainerHotels>

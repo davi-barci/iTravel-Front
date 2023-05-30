@@ -397,6 +397,7 @@ const ContainerHotels = styled.div`
                         align-items: center;
                         justify-content: center;
                         margin-left: 10px;
+                        flex-wrap: wrap;
 
                         >div{
                             display: flex;
@@ -404,6 +405,7 @@ const ContainerHotels = styled.div`
                             align-items: center;
                             margin-right: 15px;
                             flex-wrap: wrap;
+                            margin-bottom: 15px;
 
                             >img{
                                 width:10px;

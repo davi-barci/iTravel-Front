@@ -1,14 +1,15 @@
 import styled from "styled-components";
 import { BsGlobe } from "react-icons/bs";
 import BrazilFlag from "../../assets/brazil_flag.png";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function NavBar(){
     const location = useLocation();
+    const navigate = useNavigate();
 
     return (
         <ContainerNavBar pathname={location.pathname}>
-            <p>iTravel</p>
+            <p onClick={() => navigate("/")}>iTravel</p>
             <div>
                 <img src={BrazilFlag} alt="Brazil Flag"/>
                 <div>
@@ -47,6 +48,7 @@ const ContainerNavBar = styled.div`
         font-weight: 700;
         color: #FFFFFF;
         margin-left: 85px;
+        cursor: pointer;
     }
 
     >div{
